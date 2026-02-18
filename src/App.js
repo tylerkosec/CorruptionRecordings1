@@ -37,25 +37,25 @@ export default function App() {
     () => [
       {
         band: "MUGSHOT",
-        role: "Drums / Production",
+        role: "Drums / Full Production",
         img: ASSET.clients.mugshot,
         ig: "https://www.instagram.com/mugshotca/",
       },
       {
         band: "FOX LAKE",
-        role: "Drums / Mixing",
+        role: "Song Writing / Full Production",
         img: ASSET.clients.foxlake,
         ig: "https://www.instagram.com/foxlakeco/",
       },
       {
         band: "NO CURE",
-        role: "Mastering Engineer",
+        role: "Mixing / Mastering",
         img: ASSET.clients.nocure,
         ig: "https://www.instagram.com/nocurestraightedge/",
       },
       {
         band: "CELLMETAL",
-        role: "Production / Mix",
+        role: "Songwriting / Full Production",
         img: ASSET.clients.cellmetal,
         ig: "https://www.instagram.com/cellmetal_/",
       },
@@ -79,6 +79,46 @@ export default function App() {
   const gmailCompose = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
     EMAIL
   )}`;
+
+  // Contact form state + handlers
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    budget: "",
+    details: "",
+  });
+
+  const [formStatus, setFormStatus] = useState({ type: "", msg: "" });
+
+  const onField = (e) => {
+    const { name, value } = e.target;
+    setForm((p) => ({ ...p, [name]: value }));
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    if (!form.name || !form.email || !form.details) {
+      setFormStatus({ type: "error", msg: "Fill the required fields (*)." });
+      return;
+    }
+
+    // mailto fallback (no backend)
+    const subject = `Project Inquiry — ${form.name}`;
+    const body =
+      `Name: ${form.name}\n` +
+      `Phone: ${form.phone}\n` +
+      `Email: ${form.email}\n` +
+      `Estimated Budget: ${form.budget}\n\n` +
+      `Project Details:\n${form.details}\n`;
+
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+
+    setFormStatus({ type: "ok", msg: "Opening your email client…" });
+  };
 
   return (
     <div className="app-container">
@@ -261,12 +301,93 @@ export default function App() {
 
         footer{padding:70px 0 60px;border-top:1px solid rgba(255,255,255,.08)}
         .footer-cta{display:flex;flex-direction:column;gap:18px;align-items:center;justify-content:center;}
+
         .footer-brand-icon{
           width:min(240px, 60vw);
           height:auto;
           object-fit:contain;
           opacity:.9;
         }
+
+        /* CONTACT FORM */
+        .contact-form{
+          width:min(760px, 92vw);
+          display:flex;
+          flex-direction:column;
+          gap:14px;
+          padding:18px;
+          border-radius:18px;
+          border:1px solid rgba(255,255,255,.10);
+          background:rgba(255,255,255,.03);
+          box-shadow:var(--shadow);
+        }
+        .grid2{
+          display:grid;
+          grid-template-columns:1fr;
+          gap:14px;
+        }
+        @media (min-width: 820px){
+          .grid2{grid-template-columns:1fr 1fr;}
+        }
+        .field{display:flex;flex-direction:column;gap:8px;}
+        .field span{
+          font-weight:900;
+          font-size:11px;
+          letter-spacing:.22em;
+          text-transform:uppercase;
+          color:rgba(255,255,255,.72);
+        }
+        .field input,
+        .field textarea{
+          width:100%;
+          border-radius:14px;
+          border:1px solid rgba(255,255,255,.14);
+          background:rgba(0,0,0,.35);
+          color:#fff;
+          padding:12px 12px;
+          outline:none;
+          font-weight:700;
+        }
+        .field textarea{resize:vertical; min-height:140px;}
+        .field input::placeholder,
+        .field textarea::placeholder{color:rgba(255,255,255,.42);font-weight:600;}
+        .field input:focus,
+        .field textarea:focus{border-color:rgba(236,78,23,.65);}
+
+        .contact-submit{
+          border-radius:999px;
+          padding:14px 18px;
+          font-weight:1000;
+          letter-spacing:.14em;
+          text-transform:uppercase;
+          font-size:12px;
+          border:1px solid rgba(255,255,255,.18);
+          background:var(--orange);
+          color:#0b0b0b;
+          cursor:pointer;
+        }
+        .contact-submit:hover{transform:translateY(-1px)}
+        .contact-submit:active{transform:translateY(0px)}
+
+        .form-status{
+          padding:10px 12px;
+          border-radius:12px;
+          font-weight:900;
+          letter-spacing:.06em;
+          text-transform:uppercase;
+          font-size:11px;
+          text-align:center;
+          border:1px solid rgba(255,255,255,.14);
+        }
+        .form-status.ok{
+          background:rgba(46, 204, 113, .12);
+          border-color:rgba(46, 204, 113, .28);
+        }
+        .form-status.error{
+          background:rgba(231, 76, 60, .12);
+          border-color:rgba(231, 76, 60, .28);
+        }
+
         .footer-email-pill{
           display:inline-flex;align-items:center;gap:12px;padding:16px 18px;border-radius:999px;
           background:rgba(236,78,23,.92);color:#0b0b0b;font-weight:1000;letter-spacing:.10em;
@@ -431,7 +552,7 @@ export default function App() {
             <div>
               <span className="section-subtitle">// 03 PORTFOLIO</span>
               <h2 className="section-title">
-                CLIENT <span>LIST</span>
+                Featured <span>Clients</span>
               </h2>
             </div>
           </div>
@@ -467,14 +588,76 @@ export default function App() {
               alt="Corruption icon"
             />
 
-            <a
-              href={gmailCompose}
-              target="_blank"
-              rel="noreferrer"
-              className="footer-email-pill"
-            >
-              {EMAIL} <ExternalLink size={18} />
-            </a>
+            <form className="contact-form" onSubmit={onSubmit}>
+              <div className="grid2">
+                <label className="field">
+                  <span>Name*</span>
+                  <input
+                    name="name"
+                    value={form.name}
+                    onChange={onField}
+                    required
+                    placeholder=""
+                  />
+                </label>
+
+                <label className="field">
+                  <span>Phone Number</span>
+                  <input
+                    name="phone"
+                    value={form.phone}
+                    onChange={onField}
+                    placeholder="(###) ###-####"
+                  />
+                </label>
+              </div>
+
+              <div className="grid2">
+                <label className="field">
+                  <span>Email*</span>
+                  <input
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={onField}
+                    required
+                    placeholder=""
+                  />
+                </label>
+
+                <label className="field">
+                  <span>Estimated Budget</span>
+                  <input
+                    name="budget"
+                    value={form.budget}
+                    onChange={onField}
+                    placeholder=""
+                  />
+                </label>
+              </div>
+
+              <label className="field">
+                <span>Project Details*</span>
+                <textarea
+                  name="details"
+                  value={form.details}
+                  onChange={onField}
+                  required
+                  rows={6}
+                  placeholder=""
+                />
+              </label>
+
+              <button className="contact-submit" type="submit">
+                Send Inquiry
+              </button>
+
+              {formStatus?.msg ? (
+                <div className={`form-status ${formStatus.type}`}>
+                  {formStatus.msg}
+                </div>
+              ) : null}
+            </form>
 
             <div className="social-links">
               <a
