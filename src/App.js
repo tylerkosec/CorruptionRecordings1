@@ -503,7 +503,7 @@ export default function App() {
             <div className="about-right">
               <div className="video-frame">
                 <iframe
-                  src={`https://www.youtube.com/embed/${YOUTUBE_ID}?rel=0&modestbranding=1`}
+                  src={`https://www.youtube.com/embed/IXZDPKlgBHU`}
                   title="About Connor"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
@@ -578,9 +578,20 @@ export default function App() {
         </div>
       </section>
 
-      {/* FOOTER / INQUIRE */}
+      {/* CONTACT / INQUIRE */}
       <footer id="inquire">
         <div className="container">
+          {/* Section title (same layout as other sections) */}
+          <div className="section-header">
+            <div>
+              <span className="section-subtitle">// 04 CONTACT</span>
+              <h2 className="section-title">
+                LET&apos;S <span>WORK</span>
+              </h2>
+            </div>
+          </div>
+
+          {/* Contact content */}
           <div className="footer-cta">
             <img
               className="footer-brand-icon"
